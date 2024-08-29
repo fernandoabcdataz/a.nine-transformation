@@ -4,10 +4,10 @@
 ) }}
 
 SELECT
-    payment_id,
-    account_id,
-    amount,
-    date,
-    status,
-    _loaded_at
-FROM {{ source('xero', 'payments') }}
+    PaymentID as payment_id,
+    Account as account_id,
+    Amount as amount,
+    Date as date,
+    Status as status,
+    UpdatedDateUTC as _loaded_at
+FROM {{ source('raw', 'xero_payments') }}

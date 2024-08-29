@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw
+    config:
+      enabled: true
+    schema: demo_ingestion
+    tables:
+      - name: xero_accounts
+      - name: xero_payments

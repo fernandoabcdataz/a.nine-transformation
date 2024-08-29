@@ -9,4 +9,4 @@ SELECT
     type,
     code,
     _loaded_at
-FROM {{ source('xero', 'accounts') }}
+FROM {{ source('raw', 'xero_accounts') }}
