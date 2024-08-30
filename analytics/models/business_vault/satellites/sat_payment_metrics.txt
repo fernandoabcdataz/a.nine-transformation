@@ -10,9 +10,9 @@ WITH current_payment_data AS (
         s.currency_rate,
         s.valid_from
     FROM
-        {{ ref('hub_payment') }} p
+        {{ ref('sat_xero__payment') }} p
     JOIN 
-        {{ ref('sat_payment') }} s 
+        {{ ref('sat_xero__payment') }} s 
     ON 
         p.payment_hkey = s.payment_hkey
     WHERE s.valid_to = '9999-12-31'::timestamp

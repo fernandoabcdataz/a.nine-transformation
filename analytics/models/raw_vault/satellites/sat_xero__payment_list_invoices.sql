@@ -1,15 +1,17 @@
 {{ config(
     materialized='incremental',
-    unique_key='payment_hkey',
+    unique_key='hash_diff',
     tags=['raw_vault', 'satellite']
 ) }}
 
 SELECT
     {{ dbt_utils.generate_surrogate_key(['payment_id']) }} as payment_hkey,
     {{ dbt_utils.generate_surrogate_key([
+        'payment_id',
         'list_type',
         'list_item'
     ]) }} as hash_diff,
+    payment_id,
     list_type,
     list_item,
     _loaded_at as loaded_at,

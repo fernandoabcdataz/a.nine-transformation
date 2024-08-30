@@ -1,12 +1,13 @@
 {{ config(
     materialized='incremental',
-    unique_key='payment_hkey',
+    unique_key='hash_diff',
     tags=['raw_vault', 'satellite']
 ) }}
 
 SELECT
     {{ dbt_utils.generate_surrogate_key(['payment_id']) }} as payment_hkey,
     {{ dbt_utils.generate_surrogate_key([
+        'payment_id',
         'date',
         'amount',
         'reference',
@@ -30,6 +31,7 @@ SELECT
         'contact_name',
         'contact_has_validation_errors'
     ]) }} as hash_diff,
+    payment_id,
     date,
     amount,
     reference,
