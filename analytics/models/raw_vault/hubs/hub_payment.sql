@@ -1,11 +1,17 @@
 {{ config(
-    materialized='table',
-    unique_key='payment_hk',
+    materialized='incremental',
+    unique_key='payment_hkey',
     tags=['raw_vault', 'hub']
 ) }}
 
 SELECT
-    {{ dbt_utils.generate_surrogate_key(['payment_id']) }} AS payment_hk,
-    payment_id AS payment_bk,
-    _loaded_at AS load_date
-FROM {{ ref('stg_xero__payments') }}
+    {{ dbt_utils.generate_surrogate_key(['payment_id']) }} as payment_hkey,
+    payment_id as payment_id,
+    _loaded_at as loaded_at,
+    'xero' as source_system
+FROM 
+    {{ ref('stg_xero__payments') }}
+{% if is_incremental() %}
+WHERE 
+    _loaded_at > (SELECT MAX(loaded_at) FROM {{ this }})
+{% endif %}
