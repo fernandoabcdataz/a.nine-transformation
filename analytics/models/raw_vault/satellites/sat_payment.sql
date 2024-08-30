@@ -5,21 +5,34 @@
 ) }}
 
 SELECT
-  {{ dbt_utils.generate_surrogate_key(['payment_id']) }} AS payment_hk,
-  , payment_id
-  , account
-  , has_account
-  , currency_rate
-  , is_reconciled
-  , payment_type
-  , reference
-  , date
-  , updated_date_utc
-  , has_validation_errors
-  , bank_amount
-  , invoice
-  , status
-  , amount
-  , _loaded_at
-  , 'xero' as source_system
-FROM {{ ref('stg_xero__payments') }}
+    {{ dbt_utils.surrogate_key(['payment_id']) }} as payment_hkey,
+    date,
+    amount,
+    reference,
+    currency_rate,
+    payment_type,
+    status,
+    updated_date_utc,
+    is_reconciled,
+    has_account,
+    has_validation_errors,
+    bank_amount,
+    account_id,
+    account_code,
+    invoice_id,
+    invoice_number,
+    invoice_currency_code,
+    invoice_type,
+    invoice_has_errors,
+    invoice_is_discounted,
+    contact_id,
+    contact_name,
+    contact_has_validation_errors,
+    _loaded_at as valid_from,
+    '9999-12-31'::timestamp as valid_to
+FROM 
+    {{ ref('stg_xero__payments') }}
+{% if is_incremental() %}
+WHERE 
+    _loaded_at > (SELECT MAX(valid_from) FROM {{ this }})
+{% endif %}
