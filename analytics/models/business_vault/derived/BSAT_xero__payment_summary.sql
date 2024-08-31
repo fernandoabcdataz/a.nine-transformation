@@ -1,5 +1,5 @@
 {{ config(
-    materialized='materialized_view',
+    materialized='table',
     tags=['business_vault', 'xero', 'payment']
 ) }}
 
@@ -16,7 +16,8 @@ WITH latest_payment_info AS (
         account_id,
         invoice_id,
         ROW_NUMBER() OVER (PARTITION BY payment_hkey ORDER BY loaded_at DESC) as row_num
-    FROM {{ ref('sat_xero__payment') }}
+    FROM 
+        {{ ref('sat_xero__payment') }}
 )
 SELECT 
     p.payment_hkey,
@@ -34,6 +35,9 @@ SELECT
     i.invoice_type,
     i.contact_id,
     i.contact_name
-FROM latest_payment_info p
-LEFT JOIN {{ ref('sat_xero__payment') }} i ON p.payment_hkey = i.payment_hkey
-WHERE p.row_num = 1
+FROM 
+    latest_payment_info p
+LEFT JOIN 
+    {{ ref('sat_xero__payment') }} i ON p.payment_hkey = i.payment_hkey
+WHERE 
+    p.row_num = 1
