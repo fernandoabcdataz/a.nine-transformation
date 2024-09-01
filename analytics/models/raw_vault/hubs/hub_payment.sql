@@ -8,7 +8,7 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(['payment_id']) }} as payment_hkey,
     payment_id as payment_id,
     _loaded_at as loaded_at,
-    'xero' as source_system
+    'xero' as record_source
 FROM 
     {{ ref('stg_xero__payments') }}
 {% if is_incremental() %}

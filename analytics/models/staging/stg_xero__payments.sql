@@ -1,4 +1,3 @@
--- models/staging/stg_xero__payments.sql
 {{ config(
     materialized='table',
     tags=['staging', 'xero', 'daily']
@@ -6,13 +5,13 @@
 
 SELECT
     PaymentID as payment_id,
-    Date as date,
+    DATE(TIMESTAMP_MILLIS(CAST(REGEXP_EXTRACT(Date, r'/Date\((\d+)[+-]') AS INT64))) as date,
     Amount as amount,
     Reference as reference,
     CurrencyRate as currency_rate,
     PaymentType as payment_type,
     Status as status,
-    UpdatedDateUTC as updated_date_utc,
+    TIMESTAMP_MILLIS(CAST(REGEXP_EXTRACT(UpdatedDateUTC, r'/Date\((\d+)[+-]') AS INT64)) as updated_date_utc,
     IsReconciled as is_reconciled,
     HasAccount as has_account,
     HasValidationErrors as has_validation_errors,
