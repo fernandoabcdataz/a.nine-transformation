@@ -58,7 +58,3 @@ SELECT
     'xero' as record_source
 FROM 
     {{ ref('stg_xero__payments') }}
-{% if is_incremental() %}
-WHERE 
-    _loaded_at > (SELECT MAX(valid_from) FROM {{ this }})
-{% endif %}
