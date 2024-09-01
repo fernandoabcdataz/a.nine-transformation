@@ -5,3 +5,4 @@ logs/
 profiles.yml
 service-account.json
 .user.yml
+.DS_Store
