@@ -4,7 +4,6 @@ sources:
   - name: raw
     config:
       enabled: true
-    schema: demo_ingestion
+    schema: "{{ var('client') }}_ingestion"
     tables:
-      - name: xero_accounts
       - name: xero_payments
