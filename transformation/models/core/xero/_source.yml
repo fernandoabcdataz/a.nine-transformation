@@ -6,4 +6,7 @@ sources:
       enabled: true
     schema: "{{ var('client') }}_ingestion"
     tables:
+      - name: xero_accounts
+      - name: xero_bank_transactions
+      - name: xero_invoices
       - name: xero_payments

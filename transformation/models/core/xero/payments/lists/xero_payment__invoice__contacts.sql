@@ -9,7 +9,8 @@ WITH source AS (
         Invoice.InvoiceID AS invoice_id,
         Invoice.Contact.ContactID AS contact_id,
         Invoice.Contact.Name AS contact_name,
-        Invoice.Contact.HasValidationErrors AS contact_has_validation_errors
+        Invoice.Contact.HasValidationErrors AS contact_has_validation_errors,
+        ingestion_time
     FROM
         {{ source('raw', 'xero_payments')}}
     WHERE

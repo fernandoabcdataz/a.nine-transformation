@@ -7,12 +7,14 @@ WITH source AS (
     SELECT
         PaymentID AS payment_id,
         Invoice.InvoiceID AS invoice_id,
-        prepayment
+        Invoice.Contact.ContactID AS contact_id,
+        contact_person,
+        ingestion_time
     FROM
         {{ source('raw', 'xero_payments')}},
-        UNNEST(Invoice.Prepayments) AS prepayment
+        UNNEST(Invoice.Contact.ContactPersons) AS contact_person
     WHERE
-        Invoice.InvoiceID IS NOT NULL
+        Invoice.Contact.ContactID IS NOT NULL
 )
 
 SELECT

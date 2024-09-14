@@ -11,7 +11,8 @@ WITH source AS (
         Invoice.Type AS invoice_type,
         Invoice.CurrencyCode AS invoice_currency_code,
         Invoice.HasErrors AS invoice_has_errors,
-        Invoice.IsDiscounted AS invoice_is_discounted
+        Invoice.IsDiscounted AS invoice_is_discounted,
+        ingestion_time
     FROM
         {{ source('raw', 'xero_payments')}}
     WHERE

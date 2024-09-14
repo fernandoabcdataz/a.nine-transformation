@@ -7,10 +7,11 @@ WITH source AS (
     SELECT
         PaymentID AS payment_id,
         Invoice.InvoiceID AS invoice_id,
-        line_item AS line_item_value
+        prepayment,
+        ingestion_time
     FROM
-        {{ source('raw', 'xero_payments') }},
-        UNNEST(Invoice.LineItems) AS line_item
+        {{ source('raw', 'xero_payments')}},
+        UNNEST(Invoice.Prepayments) AS prepayment
     WHERE
         Invoice.InvoiceID IS NOT NULL
 )

@@ -7,10 +7,11 @@ WITH source AS (
     SELECT
         PaymentID AS payment_id,
         Invoice.InvoiceID AS invoice_id,
-        payment_service
+        credit_note,
+        ingestion_time
     FROM
         {{ source('raw', 'xero_payments')}},
-        UNNEST(Invoice.InvoicePaymentServices) AS payment_service
+        UNNEST(Invoice.CreditNotes) AS credit_note
     WHERE
         Invoice.InvoiceID IS NOT NULL
 )

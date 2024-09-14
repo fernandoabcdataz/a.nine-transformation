@@ -7,7 +7,8 @@ WITH source AS (
     SELECT
         PaymentID AS payment_id,
         Invoice.InvoiceID AS invoice_id,
-        overpayment
+        overpayment,
+        ingestion_time
     FROM
         {{ source('raw', 'xero_payments')}},
         UNNEST(Invoice.Overpayments) AS overpayment
