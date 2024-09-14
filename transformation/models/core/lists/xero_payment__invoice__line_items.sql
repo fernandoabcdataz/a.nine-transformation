@@ -7,9 +7,9 @@ WITH source AS (
     SELECT
         PaymentID AS payment_id,
         Invoice.InvoiceID AS invoice_id,
-        line_item.*
+        line_item AS line_item_value
     FROM
-        {{ source('raw', 'xero_payments')}},
+        {{ source('raw', 'xero_payments') }},
         UNNEST(Invoice.LineItems) AS line_item
     WHERE
         Invoice.InvoiceID IS NOT NULL
