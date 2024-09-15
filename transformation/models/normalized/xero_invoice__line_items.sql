@@ -18,6 +18,8 @@ WITH invoice_line_items_raw AS (
     FROM 
         {{ source('raw', 'xero_invoices') }},
         UNNEST(JSON_EXTRACT_ARRAY(data, '$.LineItems')) AS line_item
+    WHERE 
+        JSON_VALUE(data, '$.Type') = 'ACCREC'  -- only sales invoices
 )
 
 SELECT

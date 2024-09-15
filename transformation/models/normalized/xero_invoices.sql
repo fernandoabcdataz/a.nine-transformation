@@ -22,6 +22,8 @@ WITH invoices_raw AS (
         JSON_EXTRACT_ARRAY(data, '$.LineItems') AS line_items_array
     FROM 
         {{ source('raw', 'xero_invoices') }}
+    WHERE 
+        JSON_VALUE(data, '$.Type') = 'ACCREC'  -- only sales invoices
 )
 
 SELECT
