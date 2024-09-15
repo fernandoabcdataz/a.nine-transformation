@@ -23,7 +23,7 @@ WITH invoices_raw AS (
     FROM 
         {{ source('raw', 'xero_invoices') }}
     WHERE 
-        JSON_VALUE(data, '$.Type') = 'ACCREC'  -- only sales invoices
+        JSON_VALUE(data, '$.Type') = 'ACCREC'  -- Only Sales Invoices
 )
 
 SELECT

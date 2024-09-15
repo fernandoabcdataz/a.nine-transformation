@@ -5,7 +5,7 @@
 WITH invoice_line_items_raw AS (
     SELECT
         ingestion_time,
-        invoice_id,
+        JSON_VALUE(data, '$.InvoiceID') AS invoice_id,
         JSON_VALUE(line_item, '$.LineItemID') AS line_item_id,
         JSON_VALUE(line_item, '$.Description') AS description,
         JSON_VALUE(line_item, '$.ItemCode') AS item_code,
