@@ -1,0 +1,2 @@
+docker build -t my-dbt-app .
+docker run -d -p 8080:8080 -e CLIENT_NAME=demo -e GCP_PROJECT=abcdataz -e PORT=8080 my-dbt-app

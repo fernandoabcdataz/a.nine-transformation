@@ -1,0 +1,29 @@
+name: 'transformation'
+version: '1.0.0'
+
+profile: 'transformation'
+
+# define where dbt looks for different types of files
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# configure models
+models:
+  transformation:
+    # configuration for all models in 'models/normalized/'
+    normalized:
+      +schema: "{{ var('client') }}_normalized"
+      +materialized: table
+
+    # configuration for all models in 'models/queryable/'
+    queryable:
+      +schema: "{{ var('client') }}_queryable"
+      +materialized: table
