@@ -19,9 +19,9 @@ clean-targets:
 models:
   transformation:
     # configuration for all models in 'models/core/'
-    core:
-      +schema: "{{ var('client') }}_core"
-      +materialized: view
+    normalized:
+      +schema: "{{ var('client') }}_normalized"
+      +materialized: table
 
     # configuration for all models in 'models/obt/'
     obt:
