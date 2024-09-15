@@ -5,26 +5,23 @@ combining xero_invoices, xero_payments, and xero_accounts
 */
 
 {{ config(
-    materialized='table',
-    tags=['analytics', 'xero', 'account_performance']
+    tags=['queryable', 'xero', 'account_performance']
 ) }}
 
 WITH invoice_data AS (
     SELECT
-        a.account_id,
-        a.name AS account_name,
+        ili.account_id,
         COUNT(i.invoice_id) AS total_invoices,
         SUM(i.total) AS total_invoiced_amount,
         SUM(i.amount_due) AS total_amount_due
     FROM 
-        {{ ref('xero_accounts') }} AS a
-    LEFT JOIN 
         {{ ref('xero_invoices') }} AS i
+    LEFT JOIN 
+        {{ ref('xero_invoice__line_items') }} AS ili
     ON 
-        a.account_id = i.account_id
+        i.invoice_id = ili.invoice_id
     GROUP BY 
-        a.account_id,
-        a.name
+        ili.account_id
 ),
 
 payment_data AS (
@@ -39,16 +36,20 @@ payment_data AS (
 )
 
 SELECT
-    id.account_id,
-    id.account_name,
+    a.account_id,
+    a.name AS account_name,
     id.total_invoices,
     id.total_invoiced_amount,
     id.total_amount_due,
     pd.total_payments,
     pd.total_payment_amount
-FROM
+FROM 
+    {{ ref('xero_accounts') }} AS a
+LEFT JOIN
     invoice_data AS id
+ON
+    a.account_id = id.account_id
 LEFT JOIN
     payment_data AS pd
 ON
-    id.account_id = pd.account_id
+    a.account_id = pd.account_id

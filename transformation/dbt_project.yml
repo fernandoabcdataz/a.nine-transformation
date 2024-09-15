@@ -25,5 +25,5 @@ models:
 
     # configuration for all models in 'models/queryable/'
     queryable:
-      +schema: "{{ var('client') }}_obt"
+      +schema: "{{ var('client') }}_queryable"
       +materialized: table

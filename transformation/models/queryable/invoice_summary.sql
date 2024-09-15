@@ -36,11 +36,13 @@ invoice_line_items AS (
         ili.invoice_id,
         COUNT(ili.line_item_id) AS total_items,
         SUM(ili.unit_amount) AS total_unit_amount,
-        SUM(ili.tax_amount) AS total_tax_amount
+        SUM(ili.tax_amount) AS total_tax_amount,
+        ili.account_id
     FROM
         {{ ref('xero_invoice__line_items') }} AS ili
     GROUP BY
-        ili.invoice_id
+        ili.invoice_id,
+        ili.account_id
 )
 
 SELECT
@@ -59,7 +61,8 @@ SELECT
     id.currency_code,
     il.total_items,
     il.total_unit_amount,
-    il.total_tax_amount
+    il.total_tax_amount,
+    il.account_id
 FROM
     invoice_data AS id
 LEFT JOIN

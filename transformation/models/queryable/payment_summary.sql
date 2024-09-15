@@ -22,7 +22,8 @@ WITH payment_data AS (
         p.is_reconciled,
         p.currency_code,
         i.contact_id,
-        c.name AS contact_name
+        c.name AS contact_name,
+        il.account_id
     FROM 
         {{ ref('xero_payments') }} AS p
     LEFT JOIN 
@@ -33,6 +34,10 @@ WITH payment_data AS (
         {{ ref('xero_contacts') }} AS c
     ON 
         i.contact_id = c.contact_id
+    LEFT JOIN
+        {{ ref('xero_invoice__line_items') }} AS il
+    ON
+        i.invoice_id = il.invoice_id
 )
 
 SELECT
@@ -47,6 +52,7 @@ SELECT
     is_reconciled,
     currency_code,
     contact_id,
-    contact_name
+    contact_name,
+    account_id
 FROM
     payment_data
