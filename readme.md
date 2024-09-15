@@ -43,9 +43,9 @@ This combination ensures the system can efficiently handle both **complex ad-hoc
 
 ```plaintext
 dbt_project/
-├── dbt_project.yml         # Configuration file for dbt project
+├── dbt_project.yml         # configuration file for dbt project
 ├── models/
-│   ├── normalized/         # Raw, flattened data from Xero API
+│   ├── normalized/         # raw, flattened data from Xero API
 │   │   ├── xero_accounts.sql
 │   │   ├── xero_bills.sql
 │   │   ├── xero_bill_line_items.sql
@@ -54,16 +54,16 @@ dbt_project/
 │   │   ├── xero_invoices.sql
 │   │   ├── xero_items.sql
 │   │   └── xero_payments.sql
-│   └── queryable/          # Optimized, aggregated data for querying
+│   └── queryable/          # optimized, aggregated data for querying
 │       ├── invoice_summary.sql
 │       ├── payment_summary.sql
 │       ├── account_performance.sql
 │       ├── contact_performance.sql
 │       └── invoice_aging.sql
-├── snapshots/              # Captures historical states of tables (if applicable)
-├── tests/                  # Contains custom tests for dbt models
-├── macros/                 # Reusable macros to simplify SQL logic
-└── seeds/                  # Static datasets that are loaded into the warehouse
+├── snapshots/              # captures historical states of tables (if applicable)
+├── tests/                  # contains custom tests for dbt models
+├── macros/                 # reusable macros to simplify SQL logic
+└── seeds/                  # static datasets that are loaded into the warehouse
 ```
 
 ### **Normalized Models (`models/normalized/`)**
@@ -97,18 +97,16 @@ dbt_project/
    - Set up your `profiles.yml` file to connect to your data warehouse (e.g., BigQuery). Here’s an example for BigQuery:
 
    ```yaml
-   your_profile_name:
-     target: dev
-     outputs:
-       dev:
-         type: bigquery
-         method: service-account
-         project: your_gcp_project_id
-         dataset: your_default_dataset
-         keyfile: /path/to/your/service_account.json
-         threads: 4
-         timeout_seconds: 300
-         location: US
+   transformation:
+      target: dev
+      outputs:
+         dev:
+            type: bigquery
+            method: service-account
+            project: "{{ var('project') }}"
+            dataset: "{{ var('client') }}_ingestion"
+            threads: 4
+            keyfile: service-account.json
    ```
 
 3. **Run dbt Models:**
@@ -136,7 +134,3 @@ dbt_project/
 This dbt project is designed with flexibility and scalability in mind, ensuring that both detailed, ad-hoc queries and common pre-aggregated metrics can be served efficiently. The hybrid approach combining **normalized** and **queryable** models addresses the limitations of traditional dimensional models and ensures that the LLM application can respond to a wide variety of queries without sacrificing performance or accuracy.
 
 For future development, a **semantic layer** and **knowledge base** will be set up in a separate pipeline, ensuring contextualized responses from the LLM and a more comprehensive query experience.
-
----
-
-Let me know if you need further details or adjustments!
