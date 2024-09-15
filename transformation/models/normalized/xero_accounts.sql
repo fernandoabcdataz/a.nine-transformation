@@ -21,17 +21,17 @@ WITH accounts_raw AS (
 )
 
 SELECT
-      ingestion_time,
-      account_id,
-      code,
-      name,
-      type,
-      tax_type,
-      enable_payments_to_account,
-      bank_account_number,
-      currency_code,
-      description,
-      status,
-      system_account
-  FROM 
-      accounts_raw
+    ingestion_time,
+    account_id,
+    code,
+    name,
+    type,
+    tax_type,
+    enable_payments_to_account,
+    bank_account_number,
+    currency_code,
+    description,
+    status,
+    system_account
+FROM 
+    accounts_raw
