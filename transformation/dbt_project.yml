@@ -18,12 +18,12 @@ clean-targets:
 # configure models
 models:
   transformation:
-    # configuration for all models in 'models/core/'
+    # configuration for all models in 'models/normalized/'
     normalized:
       +schema: "{{ var('client') }}_normalized"
       +materialized: table
 
-    # configuration for all models in 'models/obt/'
-    obt:
+    # configuration for all models in 'models/queryable/'
+    queryable:
       +schema: "{{ var('client') }}_obt"
       +materialized: table
