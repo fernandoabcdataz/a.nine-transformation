@@ -9,7 +9,11 @@ WITH bank_transactions_raw AS (
         JSON_VALUE(data, '$.Type') AS type,
         JSON_VALUE(data, '$.Contact.ContactID') AS contact_id,
         JSON_VALUE(data, '$.Contact.Name') AS contact_name,
-        PARSE_DATE('%Y-%m-%d', JSON_VALUE(data, '$.Date')) AS date,
+        TIMESTAMP_MILLIS(
+            CAST(
+                REGEXP_EXTRACT(JSON_VALUE(data, '$.Date'), r'/Date\((\d+)\+\d+\)/') AS INT64
+            )
+        ) AS date,
         JSON_VALUE(data, '$.Status') AS status,
         JSON_VALUE(data, '$.CurrencyCode') AS currency_code,
         JSON_VALUE(data, '$.BankAccount.BankAccountID') AS bank_account_id,
@@ -20,7 +24,11 @@ WITH bank_transactions_raw AS (
         CAST(JSON_VALUE(data, '$.Total') AS NUMERIC) AS total,
         JSON_VALUE(data, '$.Reference') AS reference,
         JSON_VALUE(data, '$.BankTransactionNumber') AS bank_transaction_number,
-        PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%SZ', JSON_VALUE(data, '$.UpdatedDateUTC')) AS updated_date_utc,
+        TIMESTAMP_MILLIS(
+            CAST(
+                REGEXP_EXTRACT(JSON_VALUE(data, '$.UpdatedDateUTC'), r'/Date\((\d+)\+\d+\)/') AS INT64
+            )
+        ) AS updated_date_utc,
         CAST(JSON_VALUE(data, '$.AddToWatchlist') AS BOOL) AS add_to_watchlist
     FROM 
         {{ source('raw', 'xero_bank_transactions') }}

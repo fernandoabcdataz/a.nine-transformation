@@ -7,6 +7,8 @@ sources:
     schema: demo_ingestion
     tables:
       - name: xero_accounts
+      - name: xero_bank_transactions
+      - name: xero_bank_transfers
       - name: xero_contacts
       - name: xero_invoices
       - name: xero_items

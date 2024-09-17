@@ -23,7 +23,11 @@ WITH accounts_raw AS (
         JSON_VALUE(data, '$.ReportingCodeName') AS reporting_code_name,
         CAST(JSON_VALUE(data, '$.HasAttachments') AS BOOL) AS has_attachments,
         CAST(JSON_VALUE(data, '$.AddToWatchlist') AS BOOL) AS add_to_watchlist,
-        PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%S', JSON_VALUE(data, '$.UpdatedDateUTC')) AS updated_date_utc
+        TIMESTAMP_MILLIS(
+            CAST(
+                REGEXP_EXTRACT(JSON_VALUE(data, '$.UpdatedDateUTC'), r'/Date\((\d+)\+\d+\)/') AS INT64
+            )
+        ) AS updated_date_utc
     FROM 
         {{ source('raw', 'xero_accounts') }}
 )
