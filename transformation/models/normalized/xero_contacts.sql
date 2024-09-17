@@ -6,14 +6,22 @@ WITH contacts_raw AS (
     SELECT
         ingestion_time,
         JSON_VALUE(data, '$.ContactID') AS contact_id,
-        JSON_VALUE(data, '$.Name') AS name,
+        JSON_VALUE(data, '$.ContactNumber') AS contact_number,
+        JSON_VALUE(data, '$.AccountNumber') AS account_number,
         JSON_VALUE(data, '$.ContactStatus') AS contact_status,
-        JSON_VALUE(data, '$.EmailAddress') AS email_address,
+        JSON_VALUE(data, '$.Name') AS name,
         JSON_VALUE(data, '$.FirstName') AS first_name,
         JSON_VALUE(data, '$.LastName') AS last_name,
-        CAST(JSON_VALUE(data, '$.IsSupplier') AS BOOL) AS is_supplier,
-        CAST(JSON_VALUE(data, '$.IsCustomer') AS BOOL) AS is_customer,
-        JSON_VALUE(data, '$.DefaultCurrency') AS default_currency
+        JSON_VALUE(data, '$.EmailAddress') AS email_address,
+        JSON_VALUE(data, '$.BankAccountDetails') AS bank_account_details,
+        JSON_VALUE(data, '$.CompanyNumber') AS company_number,
+        JSON_VALUE(data, '$.TaxNumber') AS tax_number,
+        JSON_VALUE(data, '$.AccountsReceivableTaxType') AS accounts_receivable_tax_type,
+        JSON_VALUE(data, '$.AccountsPayableTaxType') AS accounts_payable_tax_type,
+        CAST(JSON_VALUE(data, '$.IsSupplier') AS BOOLEAN) AS is_supplier,
+        CAST(JSON_VALUE(data, '$.IsCustomer') AS BOOLEAN) AS is_customer,
+        JSON_VALUE(data, '$.DefaultCurrency') AS default_currency,
+        PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%S', JSON_VALUE(data, '$.UpdatedDateUTC')) AS updated_date_utc
     FROM 
         {{ source('raw', 'xero_contacts') }}
 )
@@ -21,13 +29,21 @@ WITH contacts_raw AS (
 SELECT
     ingestion_time,
     contact_id,
-    name,
+    contact_number,
+    account_number,
     contact_status,
-    email_address,
+    name,
     first_name,
     last_name,
+    email_address,
+    bank_account_details,
+    company_number,
+    tax_number,
+    accounts_receivable_tax_type,
+    accounts_payable_tax_type,
     is_supplier,
     is_customer,
-    default_currency
+    default_currency,
+    updated_date_utc
 FROM 
     contacts_raw
