@@ -9,6 +9,9 @@ sources:
       - name: xero_accounts
       - name: xero_bank_transactions
       - name: xero_bank_transfers
+      - name: xero_batch_payments
+      - name: xero_branding_themes
+      - name: xero_budgets
       - name: xero_contacts
       - name: xero_invoices
       - name: xero_items
