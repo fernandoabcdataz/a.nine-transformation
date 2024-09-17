@@ -12,6 +12,7 @@ sources:
       - name: xero_batch_payments
       - name: xero_branding_themes
       - name: xero_budgets
+      - name: xero_contact_groups
       - name: xero_contacts
       - name: xero_invoices
       - name: xero_items
