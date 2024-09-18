@@ -14,6 +14,8 @@ sources:
       - name: xero_budgets
       - name: xero_contact_groups
       - name: xero_contacts
+      - name: xero_credit_notes
+      - name: xero_currencies
       - name: xero_invoices
       - name: xero_items
       - name: xero_payments
