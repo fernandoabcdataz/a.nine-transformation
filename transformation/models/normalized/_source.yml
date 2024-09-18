@@ -18,4 +18,6 @@ sources:
       - name: xero_currencies
       - name: xero_invoices
       - name: xero_items
+      - name: xero_journals
       - name: xero_payments
+      
