@@ -27,3 +27,9 @@ sources:
       - name: xero_payments
       - name: xero_prepayments
       - name: xero_purchase_orders
+      - name: xero_quotes
+      - name: xero_repeating_invoices
+      - name: xero_reports__balance_sheet
+      - name: xero_tracking_categories
+      - name: xero_users
+      - name: xero_tax_rates
