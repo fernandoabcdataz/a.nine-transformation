@@ -19,5 +19,8 @@ sources:
       - name: xero_invoices
       - name: xero_items
       - name: xero_journals
+      - name: xero_linked_transactions
+      - name: xero_manual_journals
+      - name: xero_organisation
       - name: xero_payments
       
