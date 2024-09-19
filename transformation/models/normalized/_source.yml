@@ -26,3 +26,4 @@ sources:
       - name: xero_payment_services
       - name: xero_payments
       - name: xero_prepayments
+      - name: xero_purchase_orders
