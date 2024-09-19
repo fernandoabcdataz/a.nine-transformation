@@ -22,5 +22,7 @@ sources:
       - name: xero_linked_transactions
       - name: xero_manual_journals
       - name: xero_organisation
+      - name: xero_overpayments
+      - name: xero_payment_services
       - name: xero_payments
-      
+      - name: xero_prepayments
