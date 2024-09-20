@@ -1,7 +1,5 @@
--- models/normalized/xero_report__balance_sheet.sql
-
 {{ config(
-    tags=['normalized', 'xero', 'balance_sheet']
+    tags=['normalized', 'xero', 'bank_summary']
 ) }}
 
 WITH report_data AS (
@@ -28,7 +26,7 @@ WITH report_data AS (
         ) AS updated_date_utc,
         JSON_EXTRACT_ARRAY(data, '$.Rows') AS rows_array
     FROM
-        {{ source('raw', 'xero_reports__balance_sheet') }}
+        {{ source('raw', 'xero_reports__bank_summary') }}
 ),
 
 -- Extract top-level rows (e.g., Header, Section)

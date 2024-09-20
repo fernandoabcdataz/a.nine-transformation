@@ -1,7 +1,5 @@
--- models/normalized/xero_report__balance_sheet.sql
-
 {{ config(
-    tags=['normalized', 'xero', 'balance_sheet']
+    tags=['normalized', 'xero', 'executive_summary']
 ) }}
 
 WITH report_data AS (
@@ -28,10 +26,34 @@ WITH report_data AS (
         ) AS updated_date_utc,
         JSON_EXTRACT_ARRAY(data, '$.Rows') AS rows_array
     FROM
-        {{ source('raw', 'xero_reports__balance_sheet') }}
+        {{ source('raw', 'xero_reports__executive_summary') }}
 ),
 
--- Extract top-level rows (e.g., Header, Section)
+-- Extract the Header row to obtain period names
+header_row AS (
+    SELECT
+        JSON_EXTRACT_ARRAY(row, '$.Cells') AS cells
+    FROM
+        report_data rd,
+        UNNEST(rd.rows_array) AS row
+    WHERE
+        JSON_VALUE(row, '$.RowType') = 'Header'
+),
+
+-- Extract period names from the Header row
+periods AS (
+    SELECT
+        ARRAY(
+            SELECT JSON_VALUE(cell, '$.Value')
+            FROM UNNEST(cells) AS cell
+            WITH OFFSET AS pos
+            WHERE pos > 0 -- Exclude the first cell which is typically empty
+        ) AS period_names
+    FROM
+        header_row
+),
+
+-- Extract top-level rows (e.g., Section)
 top_level_rows AS (
     SELECT
         rd.ingestion_time,
@@ -48,6 +70,8 @@ top_level_rows AS (
     FROM
         report_data rd,
         UNNEST(rd.rows_array) AS row
+    WHERE
+        JSON_VALUE(row, '$.RowType') != 'Header' -- Exclude Header row
 ),
 
 -- Extract nested rows within 'Section' rows (e.g., Row, SummaryRow)
@@ -120,14 +144,21 @@ final_rows AS (
         cr.updated_date_utc,
         cr.row_type,
         cr.row_title,
+        periods.period_names[SAFE_OFFSET(cell_index - 1)] AS period,
         JSON_VALUE(cell, '$.Value') AS cell_value,
         JSON_VALUE(attribute, '$.Id') AS attribute_id,
         JSON_VALUE(attribute, '$.Value') AS attribute_value
     FROM
-        combined_rows cr,
-        UNNEST(cr.cells) AS cell
-        LEFT JOIN UNNEST(JSON_EXTRACT_ARRAY(cell, '$.Attributes')) AS attribute
+        combined_rows cr
+    CROSS JOIN
+        periods
+    CROSS JOIN
+        UNNEST(cr.cells) AS cell WITH OFFSET AS cell_index
+    LEFT JOIN
+        UNNEST(JSON_EXTRACT_ARRAY(cell, '$.Attributes')) AS attribute
             ON TRUE
+    WHERE
+        cell_index > 0 -- Exclude the first cell which is typically empty
 )
 
 SELECT
@@ -140,8 +171,13 @@ SELECT
     updated_date_utc,
     row_type,
     row_title,
+    period,
     cell_value,
     attribute_id,
     attribute_value
 FROM
     final_rows
+ORDER BY
+    row_type,
+    row_title,
+    period
