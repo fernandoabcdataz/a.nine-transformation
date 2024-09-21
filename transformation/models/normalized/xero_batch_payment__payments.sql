@@ -21,7 +21,7 @@ WITH batch_payment_payments_raw AS (
 
 SELECT
     ingestion_time,
-    JSON_VALUE(data, '$.BatchPaymentID') AS batch_payment_id,
+    batch_payment_id,
     invoice_id,
     payment_id,
     bank_account_number,

@@ -1,19 +1,20 @@
 {{ config(
-    tags=['normalized', 'xero', 'credit_note_line_items']
+    tags=['normalized', 'xero', 'credit_notes', 'credit_note__line_items']
 ) }}
 
 WITH credit_note_line_items_raw AS (
     SELECT
         ingestion_time,
         JSON_VALUE(data, '$.CreditNoteID') AS credit_note_id,
-        line_item.value.Description AS description,
-        CAST(line_item.value.UnitAmount AS NUMERIC) AS unit_amount,
-        line_item.value.TaxType AS tax_type,
-        CAST(line_item.value.TaxAmount AS NUMERIC) AS tax_amount,
-        CAST(line_item.value.LineAmount AS NUMERIC) AS line_amount,
-        JSON_VALUE(line_item.value, '$.AccountCode') AS account_code,
-        JSON_VALUE(line_item.value, '$.AccountId') AS account_id,
-        CAST(line_item.value.Quantity AS NUMERIC) AS quantity
+        JSON_VALUE(line_item, '$.Description') AS description,
+        SAFE_CAST(JSON_VALUE(line_item, '$.UnitAmount') AS NUMERIC) AS unit_amount,
+        JSON_VALUE(line_item, '$.TaxType') AS tax_type,
+        SAFE_CAST(JSON_VALUE(line_item, '$.TaxAmount') AS NUMERIC) AS tax_amount,
+        SAFE_CAST(JSON_VALUE(line_item, '$.LineAmount') AS NUMERIC) AS line_amount,
+        JSON_VALUE(line_item, '$.AccountCode') AS account_code,
+        JSON_VALUE(line_item, '$.AccountId') AS account_id,
+        SAFE_CAST(JSON_VALUE(line_item, '$.Quantity') AS NUMERIC) AS quantity,
+        JSON_VALUE(line_item, '$.Tracking') AS tracking
     FROM 
         {{ source('raw', 'xero_credit_notes') }},
         UNNEST(JSON_EXTRACT_ARRAY(data, '$.LineItems')) AS line_item
@@ -29,6 +30,7 @@ SELECT
     line_amount,
     account_code,
     account_id,
-    quantity
+    quantity,
+    tracking
 FROM 
     credit_note_line_items_raw

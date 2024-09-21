@@ -1,5 +1,5 @@
 {{ config(
-    tags=['normalized', 'xero', 'contact_balances']
+    tags=['normalized', 'xero', 'contacts', 'contact__balances']
 ) }}
 
 WITH contact_balances_raw AS (

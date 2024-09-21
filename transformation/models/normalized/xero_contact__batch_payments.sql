@@ -1,18 +1,19 @@
 {{ config(
-    tags=['normalized', 'xero', 'contact_batch_payments']
+    tags=['normalized', 'xero', 'contacts', 'contact__batch_payments']
 ) }}
 
 WITH contact_batch_payments_raw AS (
     SELECT
         ingestion_time,
         JSON_VALUE(data, '$.ContactID') AS contact_id,
-        JSON_VALUE(data, '$.BatchPayments.BankAccountNumber') AS bank_account_number,
-        JSON_VALUE(data, '$.BatchPayments.BankAccountName') AS bank_account_name,
-        JSON_VALUE(data, '$.BatchPayments.Details') AS details,
-        JSON_VALUE(data, '$.BatchPayments.Code') AS code,
-        JSON_VALUE(data, '$.BatchPayments.Reference') AS reference
+        JSON_VALUE(batch_payments, '$.BankAccountNumber') AS bank_account_number,
+        JSON_VALUE(batch_payments, '$.BankAccountName') AS bank_account_name,
+        JSON_VALUE(batch_payments, '$.Details') AS details,
+        JSON_VALUE(batch_payments, '$.Code') AS code,
+        JSON_VALUE(batch_payments, '$.Reference') AS reference
     FROM 
-        {{ source('raw', 'xero_contacts') }}
+        {{ source('raw', 'xero_contacts') }},
+        UNNEST(JSON_EXTRACT_ARRAY(data, '$.BatchPayments')) AS batch_payments
 )
 
 SELECT

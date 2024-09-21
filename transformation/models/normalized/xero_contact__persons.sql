@@ -1,14 +1,14 @@
 {{ config(
-    tags=['normalized', 'xero', 'contact_persons']
+    tags=['normalized', 'xero', 'contacts', 'contact__persons']
 ) }}
 
 WITH contact_persons_raw AS (
     SELECT
         ingestion_time,
         JSON_VALUE(data, '$.ContactID') AS contact_id,
-        person.value.FirstName AS first_name,
-        person.value.LastName AS last_name,
-        person.value.EmailAddress AS email_address,
+        JSON_VALUE(person, '$.FirstName') AS first_name,
+        JSON_VALUE(person, '$.LastName') AS last_name,
+        JSON_VALUE(person, '$.EmailAddress') AS email_address,
         SAFE_CAST(JSON_VALUE(person, '$.IncludeInEmails') AS BOOL) AS include_in_emails
     FROM 
         {{ source('raw', 'xero_contacts') }},

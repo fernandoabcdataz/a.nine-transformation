@@ -5,11 +5,10 @@
 WITH currencies_raw AS (
     SELECT
         ingestion_time,
-        currency.value.Code AS code,
-        currency.value.Description AS description
+        JSON_VALUE(data, '$.Code') AS code,
+        JSON_VALUE(data, '$.Description') AS description
     FROM 
-        {{ source('raw', 'xero_currencies') }},
-        UNNEST(JSON_EXTRACT_ARRAY(data, '$.Currencies')) AS currency
+        {{ source('raw', 'xero_currencies') }}
 )
 
 SELECT
