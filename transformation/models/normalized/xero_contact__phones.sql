@@ -1,15 +1,15 @@
 {{ config(
-    tags=['normalized', 'xero', 'contact_phones']
+    tags=['normalized', 'xero', 'contacts', 'contact__phones']
 ) }}
 
 WITH contact_phones_raw AS (
     SELECT
         ingestion_time,
         JSON_VALUE(data, '$.ContactID') AS contact_id,
-        phone.value.PhoneType AS phone_type,
-        phone.value.PhoneNumber AS phone_number,
-        phone.value.PhoneAreaCode AS phone_area_code,
-        phone.value.PhoneCountryCode AS phone_country_code
+        JSON_VALUE(phone, '$.PhoneType') AS phone_type,
+        JSON_VALUE(phone, '$.PhoneNumber') AS phone_number,
+        JSON_VALUE(phone, '$.PhoneAreaCode') AS phone_area_code,
+        JSON_VALUE(phone, '$.PhoneCountryCode') AS phone_country_code
     FROM 
         {{ source('raw', 'xero_contacts') }},
         UNNEST(JSON_EXTRACT_ARRAY(data, '$.Phones')) AS phone

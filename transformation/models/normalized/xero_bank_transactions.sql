@@ -12,7 +12,7 @@ WITH bank_transactions_raw AS (
         JSON_VALUE(data, '$.BankAccount.BankAccountID') AS bank_account_id,
         JSON_VALUE(data, '$.BankAccount.Code') AS bank_account_code,
         JSON_VALUE(data, '$.BankAccount.Name') AS bank_account_name,
-        SAFE_CAST(JSON_VALUE(data, '$.IsReconciled') AS BOOL) AS is_reconciled
+        SAFE_CAST(JSON_VALUE(data, '$.IsReconciled') AS BOOL) AS is_reconciled,
         TIMESTAMP_MILLIS(
             CAST(
                 REGEXP_EXTRACT(JSON_VALUE(data, '$.Date'), r'/Date\((\d+)\+\d+\)/') AS INT64
@@ -49,7 +49,7 @@ SELECT
     bank_account_id,
     bank_account_code,
     bank_account_name,
-    is_reconciled
+    is_reconciled,
     date,
     line_amount_types,
     reference,
