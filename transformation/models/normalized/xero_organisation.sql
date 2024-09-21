@@ -3,10 +3,10 @@
 ) }}
 
 WITH organisation_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.OrganisationID') AS organisation_id,
-        JSON_VALUE(data, '$.APIKey') AS api_key,
+        -- JSON_VALUE(data, '$.APIKey') AS api_key,
         JSON_VALUE(data, '$.Name') AS name,
         JSON_VALUE(data, '$.LegalName') AS legal_name,
         SAFE_CAST(JSON_VALUE(data, '$.PaysTax') AS BOOL) AS pays_tax,
@@ -44,7 +44,11 @@ WITH organisation_raw AS (
         JSON_VALUE(data, '$.ShortCode') AS short_code,
         JSON_VALUE(data, '$.Edition') AS edition,
         JSON_VALUE(data, '$.Class') AS class,
-        JSON_VALUE(data, '$.LineOfBusiness') AS line_of_business
+        JSON_VALUE(data, '$.LineOfBusiness') AS line_of_business,
+        SAFE_CAST(JSON_VALUE(data, '$.PaymentTerms.Bills.Day') AS INT64) AS payment_terms_bills_day,
+        JSON_VALUE(data, '$.PaymentTerms.Bills.Type') AS payment_terms_bills_type,
+        SAFE_CAST(JSON_VALUE(data, '$.PaymentTerms.Sales.Day') AS INT64) AS payment_terms_sales_day,
+        JSON_VALUE(data, '$.PaymentTerms.Sales.Type') AS payment_terms_sales_type
     FROM 
         {{ source('raw', 'xero_organisation') }}
 )
@@ -52,7 +56,6 @@ WITH organisation_raw AS (
 SELECT
     ingestion_time,
     organisation_id,
-    api_key,
     name,
     legal_name,
     pays_tax,
@@ -78,6 +81,10 @@ SELECT
     short_code,
     edition,
     class,
-    line_of_business
+    line_of_business,
+    payment_terms_bills_day,
+    payment_terms_bills_type,
+    payment_terms_sales_day,
+    payment_terms_sales_type
 FROM 
     organisation_raw
