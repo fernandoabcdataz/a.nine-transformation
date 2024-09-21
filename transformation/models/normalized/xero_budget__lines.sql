@@ -1,5 +1,5 @@
 {{ config(
-    tags=['normalized', 'xero', 'budget_lines']
+    tags=['normalized', 'xero', 'budgets', 'budget__lines']
 ) }}
 
 WITH budget_lines_raw AS (
