@@ -3,7 +3,7 @@
 ) }}
 
 WITH accounts_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.AccountID') AS account_id,
         JSON_VALUE(data, '$.Code') AS code,

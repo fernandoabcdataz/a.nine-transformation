@@ -3,7 +3,7 @@
 ) }}
 
 WITH tracking_categories_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.JournalID') AS journal_id,
         JSON_VALUE(journal_line.value, '$.JournalLineID') AS journal_line_id,

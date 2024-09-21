@@ -3,7 +3,7 @@
 ) }}
 
 WITH contact_groups_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.ContactGroupID') AS contact_group_id,
         JSON_VALUE(data, '$.Name') AS name,

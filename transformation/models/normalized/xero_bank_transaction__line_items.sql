@@ -3,7 +3,7 @@
 ) }}
 
 WITH line_items_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.BankTransactionID') AS bank_transaction_id,
         JSON_VALUE(line_item, '$.LineItemID') AS line_item_id,

@@ -3,7 +3,7 @@
 ) }}
 
 WITH batch_payment_payments_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.BatchPaymentID') AS batch_payment_id,
         JSON_VALUE(payment, '$.Invoice.InvoiceID') AS invoice_id,

@@ -1,22 +1,22 @@
 {{ config(
-    tags=['normalized', 'xero', 'journal_lines']
+    tags=['normalized', 'xero', 'journalS', 'journal__lines']
 ) }}
 
 WITH journal_lines_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.JournalID') AS journal_id,
-        JSON_VALUE(journal_line.value, '$.JournalLineID') AS journal_line_id,
-        JSON_VALUE(journal_line.value, '$.AccountID') AS account_id,
-        JSON_VALUE(journal_line.value, '$.AccountCode') AS account_code,
-        JSON_VALUE(journal_line.value, '$.AccountType') AS account_type,
-        JSON_VALUE(journal_line.value, '$.AccountName') AS account_name,
-        JSON_VALUE(journal_line.value, '$.Description') AS description,
-        CAST(JSON_VALUE(journal_line.value, '$.NetAmount') AS NUMERIC) AS net_amount,
-        CAST(JSON_VALUE(journal_line.value, '$.GrossAmount') AS NUMERIC) AS gross_amount,
-        CAST(JSON_VALUE(journal_line.value, '$.TaxAmount') AS NUMERIC) AS tax_amount,
-        JSON_VALUE(journal_line.value, '$.TaxType') AS tax_type,
-        JSON_VALUE(journal_line.value, '$.TaxName') AS tax_name
+        JSON_VALUE(journal_line., '$.JournalLineID') AS journal_line_id,
+        JSON_VALUE(journal_line, '$.AccountID') AS account_id,
+        JSON_VALUE(journal_line, '$.AccountCode') AS account_code,
+        JSON_VALUE(journal_line, '$.AccountType') AS account_type,
+        JSON_VALUE(journal_line, '$.AccountName') AS account_name,
+        JSON_VALUE(journal_line, '$.Description') AS description,
+        SAFE_CAST(JSON_VALUE(journal_line, '$.NetAmount') AS NUMERIC) AS net_amount,
+        SAFE_CAST(JSON_VALUE(journal_line, '$.GrossAmount') AS NUMERIC) AS gross_amount,
+        SAFE_CAST(JSON_VALUE(journal_line, '$.TaxAmount') AS NUMERIC) AS tax_amount,
+        JSON_VALUE(journal_line, '$.TaxType') AS tax_type,
+        JSON_VALUE(journal_line, '$.TaxName') AS tax_name
     FROM 
         {{ source('raw', 'xero_journals') }},
         UNNEST(JSON_EXTRACT_ARRAY(data, '$.JournalLines')) AS journal_line

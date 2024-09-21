@@ -3,7 +3,7 @@
 ) }}
 
 WITH budgets_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.BudgetID') AS budget_id,
         JSON_VALUE(data, '$.Type') AS type,

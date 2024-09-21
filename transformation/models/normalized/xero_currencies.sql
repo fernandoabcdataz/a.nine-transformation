@@ -3,7 +3,7 @@
 ) }}
 
 WITH currencies_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.Code') AS code,
         JSON_VALUE(data, '$.Description') AS description

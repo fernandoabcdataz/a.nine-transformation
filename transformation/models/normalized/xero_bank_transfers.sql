@@ -3,7 +3,7 @@
 ) }}
 
 WITH bank_transfers_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.BankTransferID') AS bank_transfer_id,
         JSON_VALUE(data, '$.FromBankAccount.AccountID') AS from_bank_account_id,

@@ -3,7 +3,7 @@
 ) }}
 
 WITH branding_themes_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.BrandingThemeID') AS branding_theme_id,
         JSON_VALUE(data, '$.Name') AS name,

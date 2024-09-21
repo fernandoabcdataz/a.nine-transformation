@@ -3,7 +3,7 @@
 ) }}
 
 WITH credit_note_line_items_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.CreditNoteID') AS credit_note_id,
         JSON_VALUE(line_item, '$.Description') AS description,

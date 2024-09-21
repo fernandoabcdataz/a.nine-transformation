@@ -3,7 +3,7 @@
 ) }}
 
 WITH contact_batch_payments_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.ContactID') AS contact_id,
         JSON_VALUE(batch_payments, '$.BankAccountNumber') AS bank_account_number,

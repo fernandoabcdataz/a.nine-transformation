@@ -3,7 +3,7 @@
 ) }}
 
 WITH contact_balances_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.ContactID') AS contact_id,
         CAST(JSON_VALUE(data, '$.Balances.AccountsReceivable.Outstanding') AS NUMERIC) AS accounts_receivable_outstanding,
