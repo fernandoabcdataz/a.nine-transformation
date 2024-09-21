@@ -6,8 +6,8 @@ WITH budget_lines_raw AS (
     SELECT
         ingestion_time,
         JSON_VALUE(data, '$.BudgetID') AS budget_id,
-        budget_line.value.AccountID AS account_id,
-        budget_line.value.AccountCode AS account_code
+        JSON_VALUE(budget_line, '$.AccountID') AS account_id,
+        JSON_VALUE(budget_line, '$.AccountCode') AS account_code
     FROM 
         {{ source('raw', 'xero_budgets') }},
         UNNEST(JSON_EXTRACT_ARRAY(data, '$.BudgetLines')) AS budget_line

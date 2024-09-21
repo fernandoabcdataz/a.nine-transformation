@@ -1,5 +1,5 @@
 {{ config(
-    tags=['normalized', 'xero', 'budget_balances']
+    tags=['normalized', 'xero', 'budgets', 'budget__line__balances']
 ) }}
 
 WITH budget_balances_raw AS (
@@ -7,10 +7,9 @@ WITH budget_balances_raw AS (
         ingestion_time,
         JSON_VALUE(data, '$.BudgetID') AS budget_id,
         JSON_VALUE(budget_line, '$.AccountID') AS account_id,
-        balance.value.Period AS period,
-        --CAST(balance.value.Amount AS NUMERIC) AS amount,
-        balance.value.Amount AS amount,
-        balance.value.UnitAmount AS unit_amount
+        JSON_VALUE(budget_line, '$.Period') AS period,
+        JSON_VALUE(budget_line, '$.Amount') AS amount,
+        JSON_VALUE(budget_line, '$.UnitAmount') AS unit_amount
     FROM 
         {{ source('raw', 'xero_budgets') }},
         UNNEST(JSON_EXTRACT_ARRAY(data, '$.BudgetLines')) AS budget_line,
