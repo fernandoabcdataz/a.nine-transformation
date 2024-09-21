@@ -3,7 +3,7 @@
 ) }}
 
 WITH payment_services_raw AS (
-    SELECT
+    SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.PaymentServiceID') AS payment_service_id,
         JSON_VALUE(data, '$.PaymentServiceName') AS payment_service_name,
