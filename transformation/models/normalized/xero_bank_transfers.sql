@@ -12,19 +12,19 @@ WITH bank_transfers_raw AS (
         JSON_VALUE(data, '$.ToBankAccount.AccountID') AS to_bank_account_id,
         JSON_VALUE(data, '$.ToBankAccount.Code') AS to_bank_account_code,
         JSON_VALUE(data, '$.ToBankAccount.Name') AS to_bank_account_name,
-        CAST(JSON_VALUE(data, '$.Amount') AS NUMERIC) AS amount,
+        SAFE_CAST(JSON_VALUE(data, '$.Amount') AS NUMERIC) AS amount,
         TIMESTAMP_MILLIS(
             CAST(
                 SAFE.REGEXP_EXTRACT(JSON_VALUE(data, '$.Date'), r'/Date\((\d+)\+\d+\)/') AS INT64
             )
         ) AS date,
-        CAST(JSON_VALUE(data, '$.CurrencyRate') AS NUMERIC) AS currency_rate,
+        SAFE_CAST(JSON_VALUE(data, '$.CurrencyRate') AS NUMERIC) AS currency_rate,
         JSON_VALUE(data, '$.FromBankTransactionID') AS from_bank_transaction_id,
         JSON_VALUE(data, '$.ToBankTransactionID') AS to_bank_transaction_id,
-        CAST(JSON_VALUE(data, '$.FromIsReconciled') AS BOOL) AS from_is_reconciled,
-        CAST(JSON_VALUE(data, '$.ToIsReconciled') AS BOOL) AS to_is_reconciled,
+        SAFE_CAST(JSON_VALUE(data, '$.FromIsReconciled') AS BOOL) AS from_is_reconciled,
+        SAFE_CAST(JSON_VALUE(data, '$.ToIsReconciled') AS BOOL) AS to_is_reconciled,
         JSON_VALUE(data, '$.Reference') AS reference,
-        CAST(JSON_VALUE(data, '$.HasAttachments') AS BOOL) AS has_attachments,
+        SAFE_CAST(JSON_VALUE(data, '$.HasAttachments') AS BOOL) AS has_attachments,
         TIMESTAMP_MILLIS(
             CAST(
                 SAFE.REGEXP_EXTRACT(JSON_VALUE(data, '$.CreatedDateUTC'), r'/Date\((\d+)\+\d+\)/') AS INT64
@@ -42,7 +42,7 @@ SELECT
     from_bank_account_name,
     to_bank_account_id,
     to_bank_account_code,
-    to_bank_account_name,    
+    to_bank_account_name,
     amount,
     date,
     currency_rate,

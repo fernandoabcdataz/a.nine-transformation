@@ -1,5 +1,5 @@
 {{ config(
-    tags=['normalized', 'xero', 'batch_payment_payments']
+    tags=['normalized', 'xero', 'batch_payment__payments']
 ) }}
 
 WITH batch_payment_payments_raw AS (
