@@ -9,7 +9,7 @@ WITH branding_themes_raw AS (
         JSON_VALUE(data, '$.Name') AS name,
         JSON_VALUE(data, '$.LogoUrl') AS logo_url,
         JSON_VALUE(data, '$.Type') AS type,
-        CAST(JSON_VALUE(data, '$.SortOrder') AS INT64) AS sort_order,
+        SAFE_CAST(JSON_VALUE(data, '$.SortOrder') AS INT64) AS sort_order,
         TIMESTAMP_MILLIS(
             CAST(
                 SAFE.REGEXP_EXTRACT(JSON_VALUE(data, '$.CreatedDateUTC'), r'/Date\((\d+)\+\d+\)/') AS INT64
