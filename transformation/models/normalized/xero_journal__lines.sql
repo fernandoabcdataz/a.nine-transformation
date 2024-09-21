@@ -1,12 +1,12 @@
 {{ config(
-    tags=['normalized', 'xero', 'journalS', 'journal__lines']
+    tags=['normalized', 'xero', 'journals', 'journal__lines']
 ) }}
 
 WITH journal_lines_raw AS (
     SELECT DISTINCT
         ingestion_time,
         JSON_VALUE(data, '$.JournalID') AS journal_id,
-        JSON_VALUE(journal_line., '$.JournalLineID') AS journal_line_id,
+        JSON_VALUE(journal_line, '$.JournalLineID') AS journal_line_id,
         JSON_VALUE(journal_line, '$.AccountID') AS account_id,
         JSON_VALUE(journal_line, '$.AccountCode') AS account_code,
         JSON_VALUE(journal_line, '$.AccountType') AS account_type,
@@ -16,7 +16,8 @@ WITH journal_lines_raw AS (
         SAFE_CAST(JSON_VALUE(journal_line, '$.GrossAmount') AS NUMERIC) AS gross_amount,
         SAFE_CAST(JSON_VALUE(journal_line, '$.TaxAmount') AS NUMERIC) AS tax_amount,
         JSON_VALUE(journal_line, '$.TaxType') AS tax_type,
-        JSON_VALUE(journal_line, '$.TaxName') AS tax_name
+        JSON_VALUE(journal_line, '$.TaxName') AS tax_name,
+        JSON_VALUE(journal_line, '$.TrackingCategories') AS tracking_categories -- temporary
     FROM 
         {{ source('raw', 'xero_journals') }},
         UNNEST(JSON_EXTRACT_ARRAY(data, '$.JournalLines')) AS journal_line
@@ -35,6 +36,7 @@ SELECT
     gross_amount,
     tax_amount,
     tax_type,
-    tax_name
+    tax_name,
+    tracking_categories
 FROM 
     journal_lines_raw
