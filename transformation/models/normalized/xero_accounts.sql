@@ -15,19 +15,19 @@ WITH accounts_raw AS (
         JSON_VALUE(data, '$.BankAccountType') AS bank_account_type,
         JSON_VALUE(data, '$.CurrencyCode') AS currency_code,
         JSON_VALUE(data, '$.TaxType') AS tax_type,
-        CAST(JSON_VALUE(data, '$.EnablePaymentsToAccount') AS BOOL) AS enable_payments_to_account,
-        CAST(JSON_VALUE(data, '$.ShowInExpenseClaims') AS BOOL) AS show_in_expense_claims,
+        SAFE_CAST(JSON_VALUE(data, '$.EnablePaymentsToAccount') AS BOOL) AS enable_payments_to_account,
+        SAFE_CAST(JSON_VALUE(data, '$.ShowInExpenseClaims') AS BOOL) AS show_in_expense_claims,
         JSON_VALUE(data, '$.Class') AS class,
         JSON_VALUE(data, '$.SystemAccount') AS system_account,
         JSON_VALUE(data, '$.ReportingCode') AS reporting_code,
         JSON_VALUE(data, '$.ReportingCodeName') AS reporting_code_name,
-        CAST(JSON_VALUE(data, '$.HasAttachments') AS BOOL) AS has_attachments,
+        SAFE_CAST(JSON_VALUE(data, '$.HasAttachments') AS BOOL) AS has_attachments,
         TIMESTAMP_MILLIS(
             CAST(
                 REGEXP_EXTRACT(JSON_VALUE(data, '$.UpdatedDateUTC'), r'/Date\((\d+)\+\d+\)/') AS INT64
             )
         ) AS updated_date_utc,
-        CAST(JSON_VALUE(data, '$.AddToWatchlist') AS BOOL) AS add_to_watchlist
+        SAFE_CAST(JSON_VALUE(data, '$.AddToWatchlist') AS BOOL) AS add_to_watchlist
     FROM 
         {{ source('raw', 'xero_accounts') }}
 )
