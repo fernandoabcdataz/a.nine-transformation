@@ -1,5 +1,5 @@
 {{ config(
-    tags=['normalized', 'xero', 'bank_transaction_line_items']
+    tags=['normalized', 'xero', 'bank_transactions', 'bank_transaction__line_items']
 ) }}
 
 WITH line_items_raw AS (
@@ -11,6 +11,7 @@ WITH line_items_raw AS (
         SAFE_CAST(JSON_VALUE(line_item, '$.Quantity') AS NUMERIC) AS quantity,
         SAFE_CAST(JSON_VALUE(line_item, '$.UnitAmount') AS NUMERIC) AS unit_amount,
         JSON_VALUE(line_item, '$.AccountCode') AS account_code,
+        JSON_VALUE(line_item, '$.ItemCode') AS item_code,
         JSON_VALUE(line_item, '$.TaxType') AS tax_type,
         SAFE_CAST(JSON_VALUE(line_item, '$.TaxAmount') AS NUMERIC) AS tax_amount,
         SAFE_CAST(JSON_VALUE(line_item, '$.LineAmount') AS NUMERIC) AS line_amount
@@ -23,12 +24,13 @@ SELECT
     ingestion_time,
     bank_transaction_id,
     line_item_id,
-    account_code,
     description,
-    line_amount,
     quantity,
-    tax_amount,
+    unit_amount,
+    account_code,
+    item_code,
     tax_type,
-    unit_amount
+    tax_amount,
+    line_amount
 FROM 
     line_items_raw
