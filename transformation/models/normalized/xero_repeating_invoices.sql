@@ -6,19 +6,37 @@ WITH repeating_invoices_raw AS (
     SELECT
         ingestion_time,
         JSON_VALUE(data, '$.RepeatingInvoiceID') AS repeating_invoice_id,
-        JSON_VALUE(data, '$.Type') AS invoice_type,
+        JSON_VALUE(data, '$.Type') AS type,
         JSON_VALUE(data, '$.Contact.ContactID') AS contact_id,
         JSON_VALUE(data, '$.Contact.Name') AS contact_name,
+        JSON_QUERY_ARRAY(data, '$.Contact.Addresses') AS contact_addresses,
+        JSON_QUERY_ARRAY(data, '$.Contact.ContactGroups') AS contact_contact_groups,
+        JSON_QUERY_ARRAY(data, '$.Contact.ContactPersons') AS contact_contact_persons,
+        JSON_QUERY_ARRAY(data, '$.Contact.Phones') AS contact_phones,
+        JSON_VALUE(data, '$.Contact.HasValidationErrors') AS has_validation_errors,
+        JSON_VALUE(data, '$.Schedule.Period') AS schedule_period,
+        JSON_VALUE(data, '$.Schedule.Unit') AS schedule_unit,
+        JSON_VALUE(data, '$.Schedule.DueDate') AS schedule_due_date,
+        JSON_VALUE(data, '$.Schedule.DueDateType') AS schedule_due_date_type,
         TIMESTAMP_MILLIS(
             CAST(
-                REGEXP_EXTRACT(JSON_VALUE(data, '$.NextScheduledDate'), r'/Date\((\d+)\+\d+\)/') AS INT64
+                REGEXP_EXTRACT(JSON_VALUE(data, '$.Schedule.StartDate'), r'/Date\((\d+)\+\d+\)/') AS INT64
             )
-        ) AS next_scheduled_date,
+        ) AS schedule_start_date,
+        TIMESTAMP_MILLIS(
+            CAST(
+                REGEXP_EXTRACT(JSON_VALUE(data, '$.Schedule.NextScheduledDate'), r'/Date\((\d+)\+\d+\)/') AS INT64
+            )
+        ) AS schedule_next_scheduled_date,
+        TIMESTAMP_MILLIS(
+            CAST(
+                REGEXP_EXTRACT(JSON_VALUE(data, '$.Schedule.EndDate'), r'/Date\((\d+)\+\d+\)/') AS INT64
+            )
+        ) AS schedule_end_date,
         JSON_VALUE(data, '$.LineAmountTypes') AS line_amount_types,
         JSON_VALUE(data, '$.Reference') AS reference,
         JSON_VALUE(data, '$.BrandingThemeID') AS branding_theme_id,
         JSON_VALUE(data, '$.CurrencyCode') AS currency_code,
-        SAFE_CAST(JSON_VALUE(data, '$.CurrencyRate') AS NUMERIC) AS currency_rate,
         JSON_VALUE(data, '$.Status') AS status,
         SAFE_CAST(JSON_VALUE(data, '$.SubTotal') AS NUMERIC) AS subtotal,
         SAFE_CAST(JSON_VALUE(data, '$.TotalTax') AS NUMERIC) AS total_tax,
@@ -35,33 +53,33 @@ WITH repeating_invoices_raw AS (
 SELECT
     ingestion_time,
     repeating_invoice_id,
-    invoice_type,
-    quote_number,
-    reference,
-    title,
-    summary,
-    terms,
-    parsed_invoice_date AS invoice_date,
-    parsed_expiry_date AS expiry_date,
-    status,
+    type,
+    contact_id,
+    contact_name,
+    contact_addresses,
+    contact_contact_groups,
+    contact_contact_persons,
+    contact_phones,
+    has_validation_errors,
+    schedule_period,
+    schedule_unit,
+    schedule_due_date,
+    schedule_due_date_type,
+    schedule_start_date,
+    schedule_next_scheduled_date,
+    schedule_end_date,
     line_amount_types,
+    reference,
+    branding_theme_id,
+    currency_code,
+    status,
     subtotal,
     total_tax,
     total,
-    total_discount,
-    currency_code,
-    currency_rate,
-    branding_theme_id,
     has_attachments,
     approved_for_sending,
     send_copy,
     mark_as_sent,
-    include_pdf,
-    contact_id,
-    contact_name,
-    parsed_start_date AS start_date,
-    next_scheduled_date,
-    parsed_end_date AS end_date,
-    updated_date_utc
+    include_pdf
 FROM 
     repeating_invoices_raw

@@ -3,14 +3,14 @@
 ) }}
 
 WITH journal_lines_raw AS (
-    SELECT DISTINCT
+    SELECT
         ingestion_time,
         JSON_VALUE(data, '$.ManualJournalID') AS manual_journal_id,
         SAFE_CAST(JSON_VALUE(journal_line, '$.LineAmount') AS NUMERIC) AS line_amount,
         JSON_VALUE(journal_line, '$.AccountCode') AS account_code,
         JSON_VALUE(journal_line, '$.Description') AS description,
         JSON_VALUE(journal_line, '$.TaxType') AS tax_type,
-        JSON_VALUE(journal_line, '$.Tracking') AS tracking, -- temporary
+        JSON_QUERY_ARRAY(journal_line, '$.Tracking') AS tracking,
         SAFE_CAST(JSON_VALUE(journal_line, '$.TaxAmount') AS NUMERIC) AS tax_amount
     FROM 
         {{ source('raw', 'xero_manual_journals') }},

@@ -15,7 +15,7 @@ WITH purchase_orders_raw AS (
         JSON_QUERY_ARRAY(data, '$.Contact.Addresses') AS contact_addresses,
         JSON_QUERY_ARRAY(data, '$.Contact.ContactGroups') AS contact_contact_groups,
         JSON_QUERY_ARRAY(data, '$.Contact.ContactPersons') AS contact_contact_persons,
-        JSON_QUERY_ARRAY(data, '$.Contact.Phones') AS contact_phones, --temporary
+        JSON_QUERY_ARRAY(data, '$.Contact.Phones') AS contact_phones,
         TIMESTAMP_MILLIS(
             CAST(
                 REGEXP_EXTRACT(JSON_VALUE(data, '$.Contact.UpdatedDateUTC'), r'/Date\((\d+)\+\d+\)/') AS INT64

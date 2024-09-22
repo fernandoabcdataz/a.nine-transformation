@@ -3,7 +3,7 @@
 ) }}
 
 WITH credit_note_line_items_raw AS (
-    SELECT DISTINCT
+    SELECT
         ingestion_time,
         JSON_VALUE(data, '$.CreditNoteID') AS credit_note_id,
         JSON_VALUE(line_item, '$.Description') AS description,
@@ -14,7 +14,7 @@ WITH credit_note_line_items_raw AS (
         JSON_VALUE(line_item, '$.AccountCode') AS account_code,
         JSON_VALUE(line_item, '$.AccountId') AS account_id,
         SAFE_CAST(JSON_VALUE(line_item, '$.Quantity') AS NUMERIC) AS quantity,
-        JSON_VALUE(line_item, '$.Tracking') AS tracking
+        JSON_QUERY_ARRAY(line_item, '$.Tracking') AS tracking
     FROM 
         {{ source('raw', 'xero_credit_notes') }},
         UNNEST(JSON_EXTRACT_ARRAY(data, '$.LineItems')) AS line_item
