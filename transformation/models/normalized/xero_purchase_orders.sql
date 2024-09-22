@@ -3,12 +3,25 @@
 ) }}
 
 WITH purchase_orders_raw AS (
-    SELECT DISTINCT
+    SELECT
         ingestion_time,
         JSON_VALUE(data, '$.PurchaseOrderID') AS purchase_order_id,
         JSON_VALUE(data, '$.PurchaseOrderNumber') AS purchase_order_number,
         JSON_VALUE(data, '$.Contact.ContactID') AS contact_id,
+        JSON_VALUE(data, '$.Contact.ContactStatus') AS contact_status,
         JSON_VALUE(data, '$.Contact.Name') AS contact_name,
+        JSON_VALUE(data, '$.Contact.FirstName') AS contact_first_name,
+        JSON_VALUE(data, '$.Contact.LastName') AS contact_last_name,
+        JSON_QUERY_ARRAY(data, '$.Contact.Addresses') AS contact_addresses,
+        JSON_QUERY_ARRAY(data, '$.Contact.ContactGroups') AS contact_contact_groups,
+        JSON_QUERY_ARRAY(data, '$.Contact.ContactPersons') AS contact_contact_persons,
+        JSON_QUERY_ARRAY(data, '$.Contact.Phones') AS contact_phones, --temporary
+        TIMESTAMP_MILLIS(
+            CAST(
+                REGEXP_EXTRACT(JSON_VALUE(data, '$.Contact.UpdatedDateUTC'), r'/Date\((\d+)\+\d+\)/') AS INT64
+            )
+        ) AS contact_updated_date_utc,
+        JSON_VALUE(data, '$.Contact.DefaultCurrency') AS contact_default_currency,
         TIMESTAMP_MILLIS(
             CAST(
                 REGEXP_EXTRACT(JSON_VALUE(data, '$.Date'), r'/Date\((\d+)\+\d+\)/') AS INT64
@@ -50,11 +63,20 @@ WITH purchase_orders_raw AS (
 )
 
 SELECT
-ingestion_time,
+    ingestion_time,
     purchase_order_id,
     purchase_order_number,
     contact_id,
+    contact_status,
     contact_name,
+    contact_first_name,
+    contact_last_name,
+    contact_addresses,
+    contact_contact_groups,
+    contact_contact_persons,
+    contact_phones,
+    contact_updated_date_utc,
+    contact_default_currency,
     date,
     delivery_date,
     line_amount_types,
